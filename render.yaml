@@ -1,0 +1,19 @@
+# Render.com Free Deployment Blueprint
+# File: render.yaml
+services:
+  - type: web
+    name: rs-token-mining-bot
+    env: node
+    plan: free
+    region: singapore # or oregon / frankfurt
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BOT_TOKEN
+        sync: false # Set in Render Dashboard
+      - key: WEBAPP_URL
+        sync: false # Set to your https://rs-token-mining-bot.onrender.com
+      - key: PORT
+        value: 10000
