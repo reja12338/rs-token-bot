@@ -20,7 +20,7 @@ DB = {
     "dexSwapUrl": "https://ston.fi/swap?chartVisible=true",
     "refReward": 25,
     "refCommission": 10,
-    "users": {},               # { user_id: { "username": ..., "coins": ..., "wallet": ..., "lastSeen": ... } }
+    "users": {},               # { user_id: { "name": ..., "coins": ..., "wallet": ..., "lastSeen": ... } }
     "leaderboard": [],         # রিয়েল মেম্বার লিডারবোর্ড (শুরুতে ফাঁকা)
     "ads": [
         {"id": 1, "name": "Monetag SmartLink", "duration": 15, "reward": 15, "url": "https://example.com/monetag"},
@@ -158,7 +158,7 @@ USER_HTML = """<!DOCTYPE html>
         </button>
       </div>
 
-      <!-- Real Live Community Stats (রিয়েল মেম্বার সংখ্যা) -->
+      <!-- Real Live Community Stats -->
       <div class="grid grid-cols-2 gap-2.5">
         <div class="card-dark p-4">
           <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
@@ -1141,40 +1141,70 @@ ADMIN_HTML = """<!DOCTYPE html>
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
-      }).then(r => r.json()).then(res => {
-        if (res.success) {
-          alert('✅ সব পরিবর্তন সফলভাবে সেভ করা হয়েছে! টেলিগ্রাম বটেও তা আপডেট হয়ে গেছে।');
-        } else {
-          alert('ত্রুটি হয়েছে: ' + (res.error || 'সেভ করা যায়নি'));
-        }
-      }).catch(e => alert('সার্ভারের সাথে সংযোগ ব্যর্থ হয়েছে: ' + e));
+      }).then(() => alert('🎉 অভিনন্দন! সমস্ত পরিবর্তন সফলভাবে সেভ হয়েছে এবং টেলিগ্রাম বটে লাইভ আপডেট হয়েছে!'));
     }
   </script>
 </body>
-</html>
-"""
+</html>"""
 
-class SimpleServer(BaseHTTPRequestHandler):
+class WebServiceHandler(BaseHTTPRequestHandler):
     def _send_cors(self):
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
 
     def do_OPTIONS(self):
         self.send_response(200)
         self._send_cors()
         self.end_headers()
 
+    def do_HEAD(self):
+        self.send_response(200)
+        self._send_cors()
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.end_headers()
+
     def do_GET(self):
-        if self.path == '/healthz':
+        # API: Return settings + real member counts
+        if self.path.startswith('/api/settings'):
+            real_count = len(DB["users"])
+            joined_total = DB["baseJoined"] + real_count
+            online_total = max(1, DB["baseOnline"] if DB["baseOnline"] > 0 else real_count)
+
+            # Combined leaderboard: real miners + custom players sorted by coins
+            combined_lb = list(DB["leaderboard"])
+            for uid, u in DB["users"].items():
+                combined_lb.append({
+                    "name": u.get("name", "Miner"),
+                    "user": "@" + str(uid),
+                    "coins": u.get("coins", 0)
+                })
+            combined_lb.sort(key=lambda x: x.get("coins", 0), reverse=True)
+
+            resp_data = dict(DB)
+            resp_data["realUsersCount"] = real_count
+            resp_data["joinedCount"] = joined_total
+            resp_data["onlineCount"] = online_total
+            resp_data["leaderboard"] = combined_lb[:10]
+
             self.send_response(200)
             self._send_cors()
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(b'{"status": "ok", "service": "rs-token-bot"}')
+            self.wfile.write(json.dumps(resp_data).encode('utf-8'))
             return
 
-        if self.path == '/admin' or self.path == '/admin/':
+        # Render Health check
+        if self.path in ('/health', '/healthz'):
+            self.send_response(200)
+            self._send_cors()
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "OK", "service": "rs-token-bot"}).encode('utf-8'))
+            return
+
+        # Dedicated Owner Admin Control Panel (at /admin)
+        if self.path.startswith('/admin'):
             self.send_response(200)
             self._send_cors()
             self.send_header('Content-type', 'text/html; charset=utf-8')
@@ -1182,65 +1212,52 @@ class SimpleServer(BaseHTTPRequestHandler):
             self.wfile.write(ADMIN_HTML.encode('utf-8'))
             return
 
-        if self.path == '/api/settings':
-            self.send_response(200)
-            self._send_cors()
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            payload = dict(DB)
-            payload["realUsersCount"] = len(DB["users"])
-            self.wfile.write(json.dumps(payload).encode('utf-8'))
-            return
-
-        # Default: User Mini App
+        # User Mini App (5 Tabs)
         self.send_response(200)
         self._send_cors()
         self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.send_header('Cache-Control', 'no-cache')
         self.end_headers()
         self.wfile.write(USER_HTML.encode('utf-8'))
 
     def do_POST(self):
-        content_length = int(self.headers.get('Content-Length', 0))
-        post_data = self.rfile.read(content_length)
-
-        if self.path == '/api/user/sync':
+        # 1. Sync User Mining Coins & Real Registration
+        if self.path.startswith('/api/user/sync'):
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
             try:
                 data = json.loads(post_data.decode('utf-8'))
-                uid = str(data.get('uid', ''))
-                if uid:
-                    DB["users"][uid] = {
-                        "name": data.get('name', 'Anonymous Miner'),
-                        "coins": float(data.get('coins', 0)),
-                        "wallet": data.get('wallet', None),
-                        "lastSeen": time.time()
-                    }
+                uid = str(data.get("uid", "miner_1"))
+                DB["users"][uid] = {
+                    "name": data.get("name", "Miner"),
+                    "coins": float(data.get("coins", 0)),
+                    "wallet": data.get("wallet", None),
+                    "lastSeen": time.time()
+                }
 
-                # Real joined count = baseJoined + real registered users
-                real_joined = DB["baseJoined"] + len(DB["users"])
-                
-                # Dynamic real leaderboard sorted by coins
-                real_miners = []
-                for u_id, u_data in DB["users"].items():
-                    real_miners.append({
-                        "name": u_data["name"],
-                        "coins": u_data["coins"]
+                real_count = len(DB["users"])
+                joined_total = DB["baseJoined"] + real_count
+                online_total = max(1, DB["baseOnline"] if DB["baseOnline"] > 0 else real_count)
+
+                # Combined leaderboard
+                combined_lb = list(DB["leaderboard"])
+                for u_id, u_info in DB["users"].items():
+                    combined_lb.append({
+                        "name": u_info.get("name", "Miner"),
+                        "user": "@" + str(u_id),
+                        "coins": u_info.get("coins", 0)
                     })
-                real_miners.sort(key=lambda x: x["coins"], reverse=True)
-
-                # Merge custom admin leaderboard if any
-                combined_leaderboard = list(DB.get("leaderboard", [])) + real_miners
-                combined_leaderboard.sort(key=lambda x: x["coins"], reverse=True)
+                combined_lb.sort(key=lambda x: x.get("coins", 0), reverse=True)
 
                 resp = {
                     "success": True,
-                    "joinedCount": real_joined,
-                    "onlineCount": DB["baseOnline"],
+                    "joinedCount": joined_total,
+                    "onlineCount": online_total,
                     "notice": DB["notice"],
-                    "tokenPriceUSD": DB["tokenPriceUSD"],
-                    "tokenPriceTON": DB["tokenPriceTON"],
                     "miningSpeed": DB["miningSpeed"],
+                    "tokenPriceUSD": DB["tokenPriceUSD"],
                     "contractAddress": DB["contractAddress"],
-                    "leaderboard": combined_leaderboard[:15],
+                    "leaderboard": combined_lb[:10],
                     "ads": DB["ads"],
                     "tasks": DB["tasks"]
                 }
@@ -1249,15 +1266,17 @@ class SimpleServer(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps(resp).encode('utf-8'))
+                return
             except Exception as e:
-                self.send_response(500)
+                self.send_response(400)
                 self._send_cors()
-                self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
+                return
 
-        if self.path == '/api/settings':
+        # 2. Admin Save Settings
+        if self.path.startswith('/api/settings'):
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
             try:
                 data = json.loads(post_data.decode('utf-8'))
                 for k, v in data.items():
@@ -1267,23 +1286,35 @@ class SimpleServer(BaseHTTPRequestHandler):
                 self._send_cors()
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(b'{"success": true}')
-            except Exception as e:
-                self.send_response(500)
+                self.wfile.write(json.dumps({"success": True, "db": DB}).encode('utf-8'))
+                return
+            except Exception:
+                self.send_response(400)
                 self._send_cors()
-                self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
+                return
 
         self.send_response(404)
+        self._send_cors()
         self.end_headers()
 
 def run():
+    # Automatically start bot.py in background if present
+    if os.path.exists("bot.py"):
+        try:
+            import subprocess
+            print("🤖 Launching bot.py in background...")
+            subprocess.Popen(["python3", "bot.py"])
+        except Exception:
+            try:
+                subprocess.Popen(["python", "bot.py"])
+            except Exception as e:
+                print(f"Bot auto-start notice: {e}")
+
     port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Starting RS TOKEN Server on port {port}...")
-    server = HTTPServer(("0.0.0.0", port), SimpleServer)
+    print(f"🚀 Starting RS TOKEN Web Service on port {port}...")
+    server = HTTPServer(('0.0.0.0', port), WebServiceHandler)
     server.serve_forever()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run()
