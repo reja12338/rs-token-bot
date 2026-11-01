@@ -1,6 +1,5 @@
 """
 Official RS TOKEN Telegram Mining Bot
-TON Blockchain Cloud Mining Ecosystem
 """
 import os
 import asyncio
@@ -13,9 +12,8 @@ from aiogram.types import (
     MenuButtonWebApp,
 )
 
-# আপনার বটের টোকেন ও লাইভ মিনি অ্যাপ URL
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8960410904:AAFprxOxrOO4ewr6F0ZvZi4nEJ88nEYwZsk")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://ais-pre-n4snohngpxyjjx7lal46kp-265976151801.asia-east1.run.app")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://rs-token-bot.onrender.com")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -25,7 +23,7 @@ async def start_handler(message: types.Message):
     user = message.from_user
     username = user.first_name if user else "Miner"
 
-    # টেলিগ্রাম চ্যাটের নিচের বামপাশের মেনু বাটন সেট করা
+    # বট মেনু বাটন সেট
     try:
         await bot.set_chat_menu_button(
             chat_id=message.chat.id,
@@ -35,7 +33,7 @@ async def start_handler(message: types.Message):
             )
         )
     except Exception as e:
-        print(f"Menu error: {e}")
+        print("Menu error:", e)
 
     # চ্যাটের ইনলাইন বাটন
     keyboard = InlineKeyboardMarkup(
@@ -47,25 +45,25 @@ async def start_handler(message: types.Message):
                 )
             ],
             [
-                InlineKeyboardButton(text="📢 অফিসিয়াল চ্যানেল", url="https://t.me/RSTokenOfficial"),
-                InlineKeyboardButton(text="👥 কমিউনিটি গ্রুপ", url="https://t.me/RSTokenChat")
+                InlineKeyboardButton(text="📢 টেলিগ্রাম চ্যানেল", url="https://t.me/RSTokenOfficial"),
+                InlineKeyboardButton(text="👥 সাপোর্ট গ্রুপ", url="https://t.me/RSTokenChat")
             ]
         ]
     )
 
-    notice = (
-        f"💎 **স্বাগতম {username} RS TOKEN মাইনিং বটে!** 🚀\n\n"
+    text = (
+        f"💎 স্বাগতম **{username}** RS TOKEN মাইনিং বটে!\n\n"
         "⚡ এটি **TON ব্লকচেইন** ভিত্তিক ক্রিপ্টো মাইনিং ও টোকেন প্ল্যাটফর্ম।\n\n"
-        "• ফ্রিতে ক্লাউড মাইনিং চালু রাখুন\n"
-        "• অ্যাড দেখে ও টাস্ক সম্পন্ন করে RS আয় করুন\n"
-        "• ২৪ ঘণ্টা পর Tonkeeper ওয়ালেটে সরাসরি উইথড্র নিন!\n\n"
-        "ড্যাশবোর্ড খুলতে নিচের বাটনে চাপুন:"
+        "• ফ্রিতে ক্লাউড মাইনিং চালু রাখুন (৬০ RS / ঘণ্টা)\n"
+        "• অ্যাড দেখে ও টাস্ক করে টোকেন আর্ন করুন\n"
+        "• অটো পেমেন্ট উইথড্র নিন!\n\n"
+        "ড্যাশবোর্ড খুলতে নিচের বাটনে চাপুন 👇"
     )
 
-    await message.answer(notice, parse_mode="Markdown", reply_markup=keyboard)
+    await message.answer(text, parse_mode="Markdown", reply_markup=keyboard)
 
 async def main():
-    print("🚀 RS TOKEN Bot is running...")
+    print("🚀 RS TOKEN Bot running...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
