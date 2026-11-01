@@ -35,7 +35,7 @@ DB = {
     "payoutHistory": []
 }
 
-# USER MINI APP
+# USER MINI APP (৫টি ট্যাব — মোবাইল ও টেলিগ্রাম WebApp ফ্রেন্ডলি, ইনস্ট্যান্ট নেভিগেশন)
 USER_HTML = """<!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -47,19 +47,20 @@ USER_HTML = """<!DOCTYPE html>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050811; color: #f1f5f9; touch-action: manipulation; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050811; color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .card-dark { background: #0c1222; border: 1px solid #1e293b; border-radius: 1.25rem; }
     .card-glow { box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.25); border-color: rgba(6, 182, 212, 0.3); }
     .coin-ring { animation: pulseGlow 2.5s infinite ease-in-out; }
     @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.4)); } 50% { filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.8)); } }
     ::-webkit-scrollbar { display: none; }
+    .tab-btn { cursor: pointer; -webkit-tap-highlight-color: rgba(6, 182, 212, 0.25); touch-action: manipulation; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between pb-24 select-none">
+<body class="min-h-screen flex flex-col justify-between pb-28">
 
   <!-- TOP HEADER -->
-  <header class="w-full bg-[#0a0f1d] border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
+  <header class="w-full bg-[#0a0f1d] border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-md">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <div onclick="handleSecretAdminClick()" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-sm cursor-pointer active:scale-95">
@@ -75,7 +76,7 @@ USER_HTML = """<!DOCTYPE html>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="toggleWalletModal()" id="header-wallet-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20">
+        <button onclick="toggleWalletModal()" type="button" id="header-wallet-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 active:scale-95 transition-all">
           <i class="fa-solid fa-wallet"></i>
           <span id="header-wallet-text">Connect Wallet</span>
         </button>
@@ -105,10 +106,11 @@ USER_HTML = """<!DOCTYPE html>
   </header>
 
   <!-- MAIN TAB CONTENT -->
-  <main class="flex-1 p-4 max-w-md mx-auto w-full space-y-4">
+  <main class="flex-1 p-4 max-w-md mx-auto w-full space-y-4 pt-2">
 
     <!-- ১. মাইনিং ট্যাব -->
-    <section id="tab-mining" class="space-y-4">
+    <section id="tab-mining" class="space-y-4" style="display: block;">
+      <!-- Balance Card -->
       <div class="card-dark card-glow p-5 text-center relative overflow-hidden">
         <p class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">আপনার ব্যালেন্স</p>
         <div class="flex items-center justify-center gap-2.5">
@@ -121,6 +123,7 @@ USER_HTML = """<!DOCTYPE html>
         </p>
       </div>
 
+      <!-- 3D Coin Mining Center -->
       <div class="card-dark p-6 text-center relative">
         <div class="relative w-48 h-48 mx-auto mb-3 flex items-center justify-center">
           <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
@@ -149,7 +152,7 @@ USER_HTML = """<!DOCTYPE html>
           </span>
         </div>
 
-        <button onclick="toggleMining()" id="mining-btn" class="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+        <button onclick="toggleMining()" type="button" id="mining-btn" class="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
           <i class="fa-solid fa-pause" id="mining-btn-icon"></i>
           <span id="mining-btn-label">মাইনিং পজ করুন</span>
         </button>
@@ -206,7 +209,6 @@ USER_HTML = """<!DOCTYPE html>
           </div>
         </div>
 
-        <!-- Real Other Members (Empty if none joined yet) -->
         <div class="space-y-2 text-xs font-mono" id="leaderboard-list">
           <div class="p-3 rounded-xl bg-slate-900 text-center text-slate-400 text-xs">
             নতুন মেম্বাররা বটে জয়েন করে মাইনিং শুরু করলে তাদের নাম ও পয়েন্ট এখানে লাইভ চলে আসবে!
@@ -216,7 +218,7 @@ USER_HTML = """<!DOCTYPE html>
     </section>
 
     <!-- ২. বিজ্ঞাপন দেখে টোকেন আয় -->
-    <section id="tab-ads" class="space-y-4 hidden">
+    <section id="tab-ads" class="space-y-4" style="display: none;">
       <div class="card-dark p-6 text-center">
         <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-cyan-500/20">
           <i class="fa-solid fa-tv"></i>
@@ -226,12 +228,41 @@ USER_HTML = """<!DOCTYPE html>
       </div>
 
       <div class="space-y-3" id="ads-list">
-        <!-- Rendered dynamically -->
+        <div class="card-dark p-4 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-xs">AD</div>
+            <div>
+              <span class="text-xs font-bold text-white">Monetag SmartLink</span>
+              <p class="text-xs text-emerald-400 font-mono font-bold mt-0.5">⏱️ 15s · +15 RS TOKEN</p>
+            </div>
+          </div>
+          <button onclick="playAd(1, 15, 15, 'https://example.com/monetag')" type="button" id="ad-btn-1" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-xs active:scale-95">অ্যাড দেখুন ↗</button>
+        </div>
+        <div class="card-dark p-4 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-xs">AD</div>
+            <div>
+              <span class="text-xs font-bold text-white">Adsterra High CPM Ad #2</span>
+              <p class="text-xs text-emerald-400 font-mono font-bold mt-0.5">⏱️ 20s · +20 RS TOKEN</p>
+            </div>
+          </div>
+          <button onclick="playAd(2, 20, 20, 'https://example.com/adsterra')" type="button" id="ad-btn-2" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-xs active:scale-95">অ্যাড দেখুন ↗</button>
+        </div>
+        <div class="card-dark p-4 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-xs">AD</div>
+            <div>
+              <span class="text-xs font-bold text-white">PropellerAds Popunder #3</span>
+              <p class="text-xs text-emerald-400 font-mono font-bold mt-0.5">⏱️ 15s · +10 RS TOKEN</p>
+            </div>
+          </div>
+          <button onclick="playAd(3, 15, 10, 'https://example.com/propeller')" type="button" id="ad-btn-3" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-xs active:scale-95">অ্যাড দেখুন ↗</button>
+        </div>
       </div>
     </section>
 
     <!-- ৩. টেলিগ্রাম চ্যানেল ও গ্রুপ টাস্ক -->
-    <section id="tab-tasks" class="space-y-4 hidden">
+    <section id="tab-tasks" class="space-y-4" style="display: none;">
       <div class="card-dark p-6 text-center">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-blue-500/20">
           <i class="fa-solid fa-paper-plane"></i>
@@ -241,12 +272,37 @@ USER_HTML = """<!DOCTYPE html>
       </div>
 
       <div class="space-y-3" id="tasks-list">
-        <!-- Rendered dynamically -->
+        <div class="card-dark p-4 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg"><i class="fa-brands fa-telegram"></i></div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Join Official RS TOKEN Channel</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5"><span class="text-emerald-400 font-bold font-mono">+50 RS</span></p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="window.open('https://t.me/RSTokenOfficial', '_blank')" type="button" class="py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold">জয়েন করুন ↗</button>
+            <button onclick="claimTaskReward(1, 50)" type="button" id="task-btn-1" class="py-2 rounded-xl bg-cyan-500 text-slate-950 font-black text-xs">যাচাই করুন</button>
+          </div>
+        </div>
+        <div class="card-dark p-4 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg"><i class="fa-brands fa-telegram"></i></div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Join RS TOKEN Community Chat</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5"><span class="text-emerald-400 font-bold font-mono">+40 RS</span></p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="window.open('https://t.me/RSTokenChat', '_blank')" type="button" class="py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold">জয়েন করুন ↗</button>
+            <button onclick="claimTaskReward(2, 40)" type="button" id="task-btn-2" class="py-2 rounded-xl bg-cyan-500 text-slate-950 font-black text-xs">যাচাই করুন</button>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ৪. রেফারেল প্রোগ্রাম -->
-    <section id="tab-referral" class="space-y-4 hidden">
+    <section id="tab-referral" class="space-y-4" style="display: none;">
       <div class="card-dark p-6 text-center">
         <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-emerald-500/20">
           <i class="fa-solid fa-users"></i>
@@ -260,21 +316,26 @@ USER_HTML = """<!DOCTYPE html>
         <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-300 break-all select-all" id="ref-url">
           https://t.me/rs_token_mining_bot?start=ref
         </div>
-        <button onclick="copyRefLink()" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-copy"></i><span>লিংক কপি করুন</span>
-        </button>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="copyRefLink()" type="button" class="py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-copy"></i><span>লিংক কপি</span>
+          </button>
+          <button onclick="shareTelegramRef()" type="button" class="py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg active:scale-95 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-share-nodes"></i><span>শেয়ার করুন</span>
+          </button>
+        </div>
       </div>
     </section>
 
     <!-- ৫. TON ওয়ালেট ও উইথড্র (রিয়েল Tonkeeper ইন্টিগ্রেশন) -->
-    <section id="tab-wallet" class="space-y-4 hidden">
+    <section id="tab-wallet" class="space-y-4" style="display: none;">
       <div class="card-dark p-6 text-center">
         <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-cyan-500/20">
           <i class="fa-solid fa-wallet"></i>
         </div>
         <h2 class="text-base font-extrabold text-white mb-1">TON ওয়ালেট ও উইথড্র</h2>
         <p class="text-xs text-slate-400 max-w-xs mx-auto mb-4">আপনার Tonkeeper ওয়ালেট কানেক্ট করে সরাসরি আপনার ওয়ালেটে RS টোকেন উইথড্র করুন।</p>
-        <button onclick="toggleWalletModal()" id="connect-wallet-main-btn" class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95">
+        <button onclick="toggleWalletModal()" type="button" id="connect-wallet-main-btn" class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95">
           Tonkeeper ওয়ালেট কানেক্ট করুন 💎
         </button>
       </div>
@@ -283,7 +344,7 @@ USER_HTML = """<!DOCTYPE html>
       <div class="card-dark p-4 space-y-2">
         <div class="flex items-center justify-between text-xs font-bold text-slate-300">
           <span>RS TOKEN Smart Contract (TON Jetton)</span>
-          <button onclick="navigator.clipboard.writeText(document.getElementById('contract-addr').innerText); alert('কপি হয়েছে!');"><i class="fa-solid fa-copy"></i></button>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('contract-addr').innerText); alert('কপি হয়েছে!');" type="button"><i class="fa-solid fa-copy"></i></button>
         </div>
         <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-cyan-300 truncate" id="contract-addr">
           EQBv_RSTOKEN_Official_Jetton_MasterPool_99
@@ -291,7 +352,7 @@ USER_HTML = """<!DOCTYPE html>
       </div>
 
       <!-- $1 Hold Lock Section -->
-      <div class="card-dark p-5 space-y-3 border-amber-500/30">
+      <div class="card-dark p-5 space-y-3 border border-amber-500/30">
         <div class="flex items-center justify-between">
           <h4 class="text-xs font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-lock text-amber-400"></i> উইথড্র অপশন লক করা আছে
@@ -299,7 +360,7 @@ USER_HTML = """<!DOCTYPE html>
           <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">LOCKED</span>
         </div>
         <p class="text-xs text-slate-300">বট স্প্যাম প্রতিরোধ ও লিকুইডিটি যাচাইকরণের জন্য ব্যবহারকারীকে $১ ডলারের RS TOKEN কিনে ২৪ ঘণ্টার জন্য হোল্ড করতে হবে। ২৪ ঘণ্টা পর স্বয়ংক্রিয়ভাবে উইথড্র আনলক হয়ে যাবে।</p>
-        <button onclick="openTonkeeperBuy()" class="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center gap-2">
+        <button onclick="openTonkeeperBuy()" type="button" class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center gap-2 active:scale-95">
           <i class="fa-solid fa-shield"></i>
           <span>$১ ডলারের RS টোকেন কিনুন ও আনলক করুন (Open Tonkeeper)</span>
         </button>
@@ -308,27 +369,42 @@ USER_HTML = """<!DOCTYPE html>
 
   </main>
 
-  <!-- ৫টি নির্দিষ্ট বটম বাটন -->
-  <nav class="fixed bottom-0 inset-x-0 bg-[#0a0f1d]/95 backdrop-blur-md border-t border-slate-800 px-2 py-2 flex items-center justify-around z-40 max-w-md mx-auto">
-    <button onclick="switchTab('mining')" id="nav-mining" class="flex flex-col items-center gap-1 text-cyan-400 min-w-[56px]"><i class="fa-solid fa-pickaxe text-base"></i><span class="text-[10px] font-bold">১. মাইনিং</span></button>
-    <button onclick="switchTab('ads')" id="nav-ads" class="flex flex-col items-center gap-1 text-slate-400 min-w-[56px]"><i class="fa-solid fa-tv text-base"></i><span class="text-[10px] font-bold">২. অ্যাডস</span></button>
-    <button onclick="switchTab('tasks')" id="nav-tasks" class="flex flex-col items-center gap-1 text-slate-400 min-w-[56px]"><i class="fa-solid fa-list-check text-base"></i><span class="text-[10px] font-bold">৩. টাস্ক</span></button>
-    <button onclick="switchTab('referral')" id="nav-referral" class="flex flex-col items-center gap-1 text-slate-400 min-w-[56px]"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-bold">৪. রেফারেল</span></button>
-    <button onclick="switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-slate-400 min-w-[56px]"><i class="fa-solid fa-wallet text-base"></i><span class="text-[10px] font-bold">৫. ওয়ালেট</span></button>
+  <!-- ৫টি নির্দিষ্ট বটম বাটন (সর্বোচ্চ z-index ও সরাসরি টাচ রেসপন্সিভ) -->
+  <nav class="fixed bottom-0 inset-x-0 bg-[#0a0f1d] border-t border-slate-800 px-2 py-2 flex items-center justify-around max-w-md mx-auto" style="z-index: 9999;">
+    <button onclick="switchTab('mining')" type="button" id="nav-mining" class="tab-btn flex flex-col items-center gap-1 text-cyan-400 font-bold min-w-[56px] py-1 px-2 rounded-xl bg-cyan-500/10 transition-all">
+      <i class="fa-solid fa-cube text-base"></i>
+      <span class="text-[10px]">১. মাইনিং</span>
+    </button>
+    <button onclick="switchTab('ads')" type="button" id="nav-ads" class="tab-btn flex flex-col items-center gap-1 text-slate-400 font-medium min-w-[56px] py-1 px-2 rounded-xl transition-all">
+      <i class="fa-solid fa-tv text-base"></i>
+      <span class="text-[10px]">২. অ্যাডস</span>
+    </button>
+    <button onclick="switchTab('tasks')" type="button" id="nav-tasks" class="tab-btn flex flex-col items-center gap-1 text-slate-400 font-medium min-w-[56px] py-1 px-2 rounded-xl transition-all">
+      <i class="fa-solid fa-list-check text-base"></i>
+      <span class="text-[10px]">৩. টাস্ক</span>
+    </button>
+    <button onclick="switchTab('referral')" type="button" id="nav-referral" class="tab-btn flex flex-col items-center gap-1 text-slate-400 font-medium min-w-[56px] py-1 px-2 rounded-xl transition-all">
+      <i class="fa-solid fa-users text-base"></i>
+      <span class="text-[10px]">৪. রেফারেল</span>
+    </button>
+    <button onclick="switchTab('wallet')" type="button" id="nav-wallet" class="tab-btn flex flex-col items-center gap-1 text-slate-400 font-medium min-w-[56px] py-1 px-2 rounded-xl transition-all">
+      <i class="fa-solid fa-wallet text-base"></i>
+      <span class="text-[10px]">৫. ওয়ালেট</span>
+    </button>
   </nav>
 
   <!-- REAL TONKEEPER WALLET CONNECT MODAL -->
-  <div id="wallet-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 hidden">
+  <div id="wallet-modal" style="display: none; z-index: 10000;" class="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
     <div class="w-full max-w-sm rounded-2xl bg-[#0c1222] border border-slate-800 p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-wallet text-cyan-400"></i> Tonkeeper ওয়ালেট কানেক্ট
         </h3>
-        <button onclick="toggleWalletModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeWalletModal()" type="button" class="text-slate-400 hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <!-- Step 1: Open Real Tonkeeper App Button -->
-      <a href="https://app.tonkeeper.com" target="_blank" class="w-full p-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-between transition-all">
+      <a href="https://app.tonkeeper.com" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-between transition-all active:scale-95">
         <div class="flex items-center gap-2.5">
           <span class="w-8 h-8 rounded-lg bg-white/20 text-white flex items-center justify-center font-black text-xs">TK</span>
           <div class="text-left">
@@ -344,41 +420,232 @@ USER_HTML = """<!DOCTYPE html>
         <label class="text-[11px] font-bold text-slate-300">আপনার আসল Tonkeeper ওয়ালেট অ্যাড্রেস দিন:</label>
         <div class="relative">
           <input type="text" id="real-ton-input" placeholder="EQ... বা UQ... (Tonkeeper)" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none pr-16">
-          <button onclick="pasteFromClipboard()" class="absolute right-1.5 top-1.5 px-2.5 py-1 rounded-lg bg-slate-800 text-cyan-400 font-bold text-[10px]">
+          <button onclick="pasteFromClipboard()" type="button" class="absolute right-1.5 top-1.5 px-2.5 py-1 rounded-lg bg-slate-800 text-cyan-400 font-bold text-[10px]">
             পেস্ট
           </button>
         </div>
         <p class="text-[10px] text-slate-500">Tonkeeper অ্যাপে গিয়ে Receive চাপলে আপনার অ্যাড্রেস পাবেন, সেটি এখানে বসিয়ে দিন।</p>
       </div>
 
-      <button onclick="saveRealWalletAddress()" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95">
+      <button onclick="saveRealWalletAddress()" type="button" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs shadow-lg active:scale-95">
         ওয়ালেট কানেক্ট সম্পন্ন করুন ✅
       </button>
     </div>
   </div>
 
   <script>
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) { tg.ready(); tg.expand(); }
+    // Safe storage helper prevents crashes on Android WebViews with storage restrictions
+    const SafeStorage = {
+      get: function(key, fallback) {
+        try {
+          const val = localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        } catch (e) {
+          return fallback;
+        }
+      },
+      set: function(key, val) {
+        try {
+          localStorage.setItem(key, val);
+        } catch (e) {}
+      }
+    };
 
-    const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-    const myUid = tgUser ? tgUser.id : ('miner_' + Math.floor(Math.random() * 89999 + 10000));
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    try {
+      if (tg) { tg.ready(); tg.expand(); }
+    } catch(e) {}
+
+    const tgUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+    const myUid = tgUser ? String(tgUser.id) : ('miner_' + Math.floor(Math.random() * 89999 + 10000));
     const myName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : 'আপনার প্রোফাইল (You)';
 
-    document.getElementById('my-username').innerText = myName;
-    document.getElementById('ref-url').innerText = 'https://t.me/rs_token_mining_bot?start=' + myUid;
+    const userEl = document.getElementById('my-username');
+    if (userEl) userEl.innerText = myName;
 
-    let balance = parseFloat(localStorage.getItem('rs_balance_' + myUid) || '0.00');
+    const refEl = document.getElementById('ref-url');
+    if (refEl) refEl.innerText = 'https://t.me/rs_token_mining_bot?start=' + myUid;
+
+    let balance = parseFloat(SafeStorage.get('rs_balance_' + myUid, '0.00')) || 0.00;
     let isMining = true;
-    let connectedWallet = localStorage.getItem('rs_real_wallet_' + myUid) || null;
+    let connectedWallet = SafeStorage.get('rs_real_wallet_' + myUid, null);
 
     if (connectedWallet) {
-      document.getElementById('header-wallet-text').innerText = connectedWallet.slice(0, 4) + '...' + connectedWallet.slice(-4);
-      document.getElementById('connect-wallet-main-btn').innerText = connectedWallet + ' (কানেক্টেড)';
-      document.getElementById('real-ton-input').value = connectedWallet;
+      const hw = document.getElementById('header-wallet-text');
+      if (hw) hw.innerText = connectedWallet.slice(0, 4) + '...' + connectedWallet.slice(-4);
+      const cw = document.getElementById('connect-wallet-main-btn');
+      if (cw) cw.innerText = connectedWallet + ' (কানেক্টেড)';
+      const ri = document.getElementById('real-ton-input');
+      if (ri) ri.value = connectedWallet;
     }
 
-    // Sync user with server and load REAL counts
+    // Tab switcher with instant responsive DOM manipulation
+    window.switchTab = function(t) {
+      const tabs = ['mining', 'ads', 'tasks', 'referral', 'wallet'];
+      for (let i = 0; i < tabs.length; i++) {
+        const id = tabs[i];
+        const tabEl = document.getElementById('tab-' + id);
+        const navEl = document.getElementById('nav-' + id);
+        if (tabEl) {
+          if (id === t) {
+            tabEl.style.display = 'block';
+          } else {
+            tabEl.style.display = 'none';
+          }
+        }
+        if (navEl) {
+          if (id === t) {
+            navEl.className = 'tab-btn flex flex-col items-center gap-1 text-cyan-400 font-bold min-w-[56px] py-1 px-2 rounded-xl bg-cyan-500/10 transition-all';
+          } else {
+            navEl.className = 'tab-btn flex flex-col items-center gap-1 text-slate-400 font-medium min-w-[56px] py-1 px-2 rounded-xl transition-all';
+          }
+        }
+      }
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch(e) {}
+    };
+
+    window.toggleMining = function() {
+      isMining = !isMining;
+      const lbl = document.getElementById('mining-btn-label');
+      const ico = document.getElementById('mining-btn-icon');
+      const st = document.getElementById('status-pill');
+      if (lbl) lbl.innerText = isMining ? 'মাইনিং পজ করুন' : 'মাইনিং শুরু করুন 🚀';
+      if (ico) ico.className = isMining ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+      if (st) st.innerText = isMining ? 'মাইনিং সক্রিয়' : 'মাইনিং বন্ধ রয়েছে';
+    };
+
+    window.toggleWalletModal = function() {
+      const m = document.getElementById('wallet-modal');
+      if (m) {
+        m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'flex' : 'none';
+      }
+    };
+
+    window.closeWalletModal = function() {
+      const m = document.getElementById('wallet-modal');
+      if (m) m.style.display = 'none';
+    };
+
+    window.pasteFromClipboard = async function() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) document.getElementById('real-ton-input').value = text.trim();
+      } catch (e) {
+        alert('ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ হয়েছে। অনুগ্রহ করে হাতে লিখুন বা পেস্ট করুন।');
+      }
+    };
+
+    window.saveRealWalletAddress = function() {
+      const input = document.getElementById('real-ton-input');
+      const addr = input ? input.value.trim() : '';
+      if (!addr) {
+        alert('অনুগ্রহ করে আপনার Tonkeeper ওয়ালেট অ্যাড্রেস দিন!');
+        return;
+      }
+      if (!addr.startsWith('EQ') && !addr.startsWith('UQ')) {
+        alert('সতর্কতা: TON ওয়ালেট অ্যাড্রেস সাধারণত EQ বা UQ দিয়ে শুরু হয়। আপনার অ্যাড্রেসটি চেক করুন।');
+      }
+      connectedWallet = addr;
+      SafeStorage.set('rs_real_wallet_' + myUid, connectedWallet);
+      const hw = document.getElementById('header-wallet-text');
+      if (hw) hw.innerText = connectedWallet.slice(0, 4) + '...' + connectedWallet.slice(-4);
+      const cw = document.getElementById('connect-wallet-main-btn');
+      if (cw) cw.innerText = connectedWallet + ' (কানেক্টেড)';
+      closeWalletModal();
+      syncUserWithServer();
+      alert('✅ আপনার আসল Tonkeeper ওয়ালেট সফলভাবে কানেক্ট করা হয়েছে:\n' + connectedWallet);
+    };
+
+    window.playAd = function(id, sec, rew, url) {
+      if (url && url !== '#') {
+        try { window.open(url, '_blank'); } catch(e) {}
+      }
+      const b = document.getElementById('ad-btn-' + id);
+      if (b) {
+        b.disabled = true;
+        let r = sec;
+        const itv = setInterval(() => {
+          r--;
+          if (r > 0) {
+            b.innerText = r + 's';
+          } else {
+            clearInterval(itv);
+            balance += rew;
+            updateBalance();
+            b.innerText = 'দেখা হয়েছে ✅';
+            syncUserWithServer();
+            alert('🎉 +' + rew + ' RS ব্যালেন্সে যোগ হয়েছে!');
+          }
+        }, 1000);
+      }
+    };
+
+    window.claimTaskReward = function(id, rew) {
+      balance += rew;
+      updateBalance();
+      const b = document.getElementById('task-btn-' + id);
+      if (b) {
+        b.innerText = 'যাচাইকৃত ✅';
+        b.disabled = true;
+      }
+      syncUserWithServer();
+      alert('🎉 +' + rew + ' RS ব্যালেন্সে যোগ হয়েছে!');
+    };
+
+    window.openTonkeeperBuy = function() {
+      try { window.open('https://app.tonkeeper.com', '_blank'); } catch(e) {}
+      alert('Tonkeeper ওপেন হচ্ছে... $১ ডলারের RS টোকেন কিনে ২৪ ঘণ্টা হোল্ড রাখুন।');
+    };
+
+    window.copyRefLink = function() {
+      const el = document.getElementById('ref-url');
+      if (el) {
+        navigator.clipboard.writeText(el.innerText);
+        alert('✅ রেফারেল লিংক কপি করা হয়েছে!');
+      }
+    };
+
+    window.shareTelegramRef = function() {
+      const el = document.getElementById('ref-url');
+      const url = el ? el.innerText : '';
+      window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent('🔥 RS TOKEN ফ্রি ক্লাউড মাইনিং-এ জয়েন করুন এবং ইনকাম করুন!'));
+    };
+
+    let secretClicks = 0;
+    window.handleSecretAdminClick = function() {
+      secretClicks++;
+      if (secretClicks >= 4) {
+        secretClicks = 0;
+        window.location.href = '/admin';
+      }
+    };
+
+    function updateBalance() {
+      const bd = document.getElementById('balance-display');
+      if (bd) bd.innerText = balance.toFixed(2);
+      const urc = document.getElementById('user-rank-coins');
+      if (urc) urc.innerText = balance.toFixed(2) + ' RS';
+      const uv = document.getElementById('usd-val');
+      if (uv) uv.innerText = '$' + (balance * 0.054).toFixed(2) + ' USD';
+      const uru = document.getElementById('user-rank-usd');
+      if (uru) uru.innerText = '≈ $' + (balance * 0.054).toFixed(2);
+      const tv = document.getElementById('ton-val');
+      if (tv) tv.innerText = (balance * 0.0098).toFixed(3) + ' TON';
+      SafeStorage.set('rs_balance_' + myUid, balance.toString());
+    }
+    updateBalance();
+
+    // Live mining counter
+    setInterval(() => {
+      if (isMining) {
+        balance += 0.0166;
+        updateBalance();
+      }
+    }, 1000);
+
+    // Sync with server
     function syncUserWithServer() {
       fetch('/api/user/sync', {
         method: 'POST',
@@ -390,193 +657,70 @@ USER_HTML = """<!DOCTYPE html>
           wallet: connectedWallet
         })
       }).then(r => r.json()).then(data => {
-        if (data.joinedCount !== undefined) document.getElementById('stat-joined').innerText = data.joinedCount;
-        if (data.onlineCount !== undefined) document.getElementById('stat-online').innerText = data.onlineCount;
-        if (data.notice) document.getElementById('notice-text').innerText = data.notice;
-        if (data.tokenPriceUSD) {
-          document.getElementById('header-price-display').innerText = '$ 1 RS = $' + data.tokenPriceUSD + ' USD';
-        }
-        if (data.miningSpeed) document.getElementById('speed-text').innerText = '+' + data.miningSpeed + ' RS / hr';
-        if (data.contractAddress) document.getElementById('contract-addr').innerText = data.contractAddress;
+        if (!data) return;
+        const sj = document.getElementById('stat-joined');
+        if (sj && data.joinedCount !== undefined) sj.innerText = data.joinedCount;
+        const so = document.getElementById('stat-online');
+        if (so && data.onlineCount !== undefined) so.innerText = data.onlineCount;
+        const nt = document.getElementById('notice-text');
+        if (nt && data.notice) nt.innerText = data.notice;
+        const hp = document.getElementById('header-price-display');
+        if (hp && data.tokenPriceUSD) hp.innerText = '$ 1 RS = $' + data.tokenPriceUSD + ' USD';
+        const st = document.getElementById('speed-text');
+        if (st && data.miningSpeed) st.innerText = '+' + data.miningSpeed + ' RS / hr';
+        const ca = document.getElementById('contract-addr');
+        if (ca && data.contractAddress) ca.innerText = data.contractAddress;
 
-        renderLeaderboard(data.leaderboard);
-        renderAds(data.ads);
-        renderTasks(data.tasks);
+        if (data.leaderboard && data.leaderboard.length > 0) {
+          const c = document.getElementById('leaderboard-list');
+          if (c) {
+            c.innerHTML = data.leaderboard.map((m, idx) => `
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-lg ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-300'} flex items-center justify-center font-bold text-xs">${idx + 1}</span>
+                  <div>
+                    <p class="font-bold text-white">${m.name}</p>
+                    <p class="text-[10px] text-slate-400">${m.username || 'রিয়েল মাইনার'}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-emerald-400">${parseFloat(m.coins || 0).toFixed(2)} RS</p>
+                  <p class="text-[10px] text-slate-400">≈ $${((m.coins || 0) * 0.054).toFixed(2)}</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
       }).catch(e => console.log('Sync error:', e));
     }
     syncUserWithServer();
-
-    function renderLeaderboard(list) {
-      const c = document.getElementById('leaderboard-list');
-      if (!list || list.length === 0) {
-        c.innerHTML = '<div class="p-3 rounded-xl bg-slate-900 text-center text-slate-400 text-xs">নতুন মেম্বাররা বটে জয়েন করে মাইনিং শুরু করলে তাদের নাম ও পয়েন্ট এখানে লাইভ চলে আসবে!</div>';
-        return;
-      }
-      c.innerHTML = list.map((item, idx) => `
-        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-300'} flex items-center justify-center font-bold text-[10px]">#${idx + 1}</span>
-            <span class="font-bold text-white truncate max-w-[120px]">${item.name}</span>
-          </div>
-          <div class="text-right">
-            <span class="text-cyan-400 font-bold">${item.coins.toFixed(2)} RS</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderAds(ads) {
-      const c = document.getElementById('ads-list');
-      if (!ads || ads.length === 0) {
-        c.innerHTML = '<p class="text-xs text-slate-500 text-center">কোনো অ্যাড উপলব্ধ নেই</p>';
-        return;
-      }
-      c.innerHTML = ads.map(a => `
-        <div class="card-dark p-4 flex items-center justify-between">
-          <div>
-            <h4 class="text-xs font-bold text-white">${a.name}</h4>
-            <p class="text-[10px] text-slate-400">সময়: ${a.duration}s · রিওয়ার্ড: +${a.reward} RS</p>
-          </div>
-          <button onclick="playAd(${a.id}, ${a.duration}, ${a.reward}, '${a.url}')" id="ad-btn-${a.id}" class="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs">
-            দেখুন ↗
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function renderTasks(tasks) {
-      const c = document.getElementById('tasks-list');
-      if (!tasks || tasks.length === 0) {
-        c.innerHTML = '<p class="text-xs text-slate-500 text-center">কোনো টাস্ক নেই</p>';
-        return;
-      }
-      c.innerHTML = tasks.map(t => `
-        <div class="card-dark p-4 space-y-2">
-          <div class="flex justify-between items-center">
-            <h4 class="text-xs font-bold text-white">${t.title}</h4>
-            <span class="text-cyan-400 font-bold text-xs">+${t.reward} RS</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="window.open('${t.url}', '_blank')" class="py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold">জয়েন করুন ↗</button>
-            <button onclick="claimTaskReward(${t.id}, ${t.reward})" id="task-btn-${t.id}" class="py-2 rounded-xl bg-cyan-500 text-white text-xs font-bold">যাচাই করুন</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function updateBalance() {
-      document.getElementById('balance-display').innerText = balance.toFixed(2);
-      document.getElementById('user-rank-coins').innerText = balance.toFixed(2) + ' RS';
-      document.getElementById('usd-val').innerText = '$' + (balance * 0.054).toFixed(2) + ' USD';
-      document.getElementById('user-rank-usd').innerText = '≈ $' + (balance * 0.054).toFixed(2);
-      document.getElementById('ton-val').innerText = (balance * 0.0098).toFixed(3) + ' TON';
-      localStorage.setItem('rs_balance_' + myUid, balance.toString());
-    }
-    updateBalance();
-
-    setInterval(() => {
-      if (isMining) {
-        balance += 0.0166;
-        updateBalance();
-      }
-    }, 1000);
-
     setInterval(syncUserWithServer, 10000);
 
-    function toggleMining() {
-      isMining = !isMining;
-      document.getElementById('mining-btn-label').innerText = isMining ? 'মাইনিং পজ করুন' : 'মাইনিং শুরু করুন 🚀';
-      document.getElementById('mining-btn-icon').className = isMining ? 'fa-solid fa-pause' : 'fa-solid fa-play';
-      document.getElementById('status-pill').innerText = isMining ? 'মাইনিং সক্রিয়' : 'মাইনিং বন্ধ রয়েছে';
-    }
-
-    function switchTab(t) {
-      ['mining','ads','tasks','referral','wallet'].forEach(id => {
-        document.getElementById('tab-' + id).classList.add('hidden');
-        document.getElementById('nav-' + id).className = 'flex flex-col items-center gap-1 text-slate-400 min-w-[56px]';
+    // Attach touch event listeners for immediate mobile reaction
+    document.addEventListener('DOMContentLoaded', () => {
+      ['mining', 'ads', 'tasks', 'referral', 'wallet'].forEach(tabName => {
+        const btn = document.getElementById('nav-' + tabName);
+        if (btn) {
+          btn.addEventListener('click', () => switchTab(tabName));
+          btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            switchTab(tabName);
+          });
+        }
       });
-      document.getElementById('tab-' + t).classList.remove('hidden');
-      document.getElementById('nav-' + t).className = 'flex flex-col items-center gap-1 text-cyan-400 min-w-[56px] font-bold';
-    }
-
-    function toggleWalletModal() { document.getElementById('wallet-modal').classList.toggle('hidden'); }
-
-    async function pasteFromClipboard() {
-      try {
-        const text = await navigator.clipboard.readText();
-        if (text) document.getElementById('real-ton-input').value = text.trim();
-      } catch (e) {
-        alert('ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ। অনুগ্রহ করে হাতে লিখুন বা পেস্ট করুন।');
-      }
-    }
-
-    function saveRealWalletAddress() {
-      const addr = document.getElementById('real-ton-input').value.trim();
-      if (!addr) {
-        alert('অনুগ্রহ করে আপনার Tonkeeper ওয়ালেট অ্যাড্রেস দিন!');
-        return;
-      }
-      if (!addr.startsWith('EQ') && !addr.startsWith('UQ')) {
-        alert('সতর্কতা: TON ওয়ালেট অ্যাড্রেস সাধারণত EQ বা UQ দিয়ে শুরু হয়। আপনার অ্যাড্রেসটি চেক করুন।');
-      }
-      connectedWallet = addr;
-      localStorage.setItem('rs_real_wallet_' + myUid, connectedWallet);
-      document.getElementById('header-wallet-text').innerText = connectedWallet.slice(0, 4) + '...' + connectedWallet.slice(-4);
-      document.getElementById('connect-wallet-main-btn').innerText = connectedWallet + ' (কানেক্টেড)';
-      toggleWalletModal();
-      syncUserWithServer();
-      alert('✅ আপনার আসল Tonkeeper ওয়ালেট সফলভাবে কানেক্ট করা হয়েছে:\n' + connectedWallet);
-    }
-
-    function playAd(id, sec, rew, url) {
-      if (url && url !== '#') window.open(url, '_blank');
-      const b = document.getElementById('ad-btn-' + id);
-      b.disabled = true; let r = sec;
-      const itv = setInterval(() => {
-        r--;
-        if (r > 0) b.innerText = r + 's';
-        else { clearInterval(itv); balance += rew; updateBalance(); b.innerText = 'দেখা হয়েছে ✅'; syncUserWithServer(); alert('🎉 +' + rew + ' RS যোগ হয়েছে!'); }
-      }, 1000);
-    }
-
-    function claimTaskReward(id, rew) {
-      balance += rew; updateBalance();
-      document.getElementById('task-btn-' + id).innerText = 'যাচাইকৃত ✅';
-      document.getElementById('task-btn-' + id).disabled = true;
-      syncUserWithServer();
-      alert('🎉 +' + rew + ' RS যোগ হয়েছে!');
-    }
-
-    function openTonkeeperBuy() {
-      window.open('https://app.tonkeeper.com', '_blank');
-      alert('Tonkeeper ওপেন হচ্ছে... $১ ডলারের RS টোকেন কিনে ২৪ ঘণ্টা হোল্ড রাখুন।');
-    }
-
-    function copyRefLink() {
-      navigator.clipboard.writeText(document.getElementById('ref-url').innerText);
-      alert('রেফারেল লিংক কপি হয়েছে!');
-    }
-
-    let secretClicks = 0;
-    function handleSecretAdminClick() {
-      secretClicks++;
-      if (secretClicks >= 5) {
-        secretClicks = 0;
-        window.location.href = '/admin';
-      }
-    }
+    });
   </script>
 </body>
 </html>
 """
 
-# DEDICATED OWNER ADMIN PANEL
+# SEPARATE DEDICATED ADMIN CONTROL PANEL (হুবহু স্ক্রিনশট ১৩ থেকে ২০)
 ADMIN_HTML = """<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RS TOKEN — এডমিন কন্ট্রোল প্যানেল</title>
+  <title>RS TOKEN এডমিন কন্ট্রোল প্যানেল</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -610,7 +754,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     <span>পরিবর্তনগুলো সেভ করুন</span>
   </button>
 
-  <!-- ১. ইউজার ও অনলাইন অ্যানালিটিক্স ম্যানেজার -->
+  <!-- ১. ইউজার ও অনলাইন অ্যানালিটিক্স ম্যানেজার (Screen 13 & 15) -->
   <div class="card-dark p-5 space-y-4">
     <div class="flex items-center justify-between">
       <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -658,7 +802,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ২. শীর্ষ লিডারবোর্ড প্লেয়ারস কন্ট্রোল -->
+  <!-- ২. শীর্ষ লিডারবোর্ড প্লেয়ারস কন্ট্রোল (Screen 14 & 15) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -675,7 +819,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৩. টেলিগ্রাম বট ব্রডকাস্ট নোটিশ ম্যানেজার -->
+  <!-- ৩. টেলিগ্রাম বট ব্রডকাস্ট নোটিশ ম্যানেজার (Screen 17) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -698,7 +842,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৪. আপনার নিজস্ব TON ব্লকচেইন টোকেন ও DEX কন্ট্রাক্ট সেটিংস -->
+  <!-- ৪. আপনার নিজস্ব TON ব্লকচেইন টোকেন ও DEX কন্ট্রাক্ট সেটিংস (Screen 17) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center gap-2">
       <i class="fa-solid fa-arrow-right-arrow-left text-cyan-400"></i>
@@ -717,7 +861,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৫. TOKEN & MINING CONTROLS -->
+  <!-- ৫. TOKEN & MINING CONTROLS (Screen 14 & 18) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center gap-2">
       <i class="fa-solid fa-chart-line text-cyan-400"></i>
@@ -749,7 +893,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৬. INSTANT AUTO-PAYMENT & WITHDRAW RULES -->
+  <!-- ৬. INSTANT AUTO-PAYMENT & WITHDRAW RULES (Screen 14, 16 & 18) -->
   <div class="card-dark p-5 space-y-4 border-amber-500/20">
     <div class="flex items-center gap-2">
       <i class="fa-solid fa-bolt text-amber-400"></i>
@@ -776,7 +920,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৭. REFERRAL PROGRAM CONFIGURATION -->
+  <!-- ৭. REFERRAL PROGRAM CONFIGURATION (Screen 16 & 19) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center gap-2">
       <i class="fa-solid fa-dollar-sign text-emerald-400"></i>
@@ -794,7 +938,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৮. অ্যাড নেটওয়ার্ক ও ডাইরেক্ট লিংক ম্যানেজার -->
+  <!-- ৮. অ্যাড নেটওয়ার্ক ও ডাইরেক্ট লিংক ম্যানেজার (Screen 16 & 19) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -811,7 +955,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ৯. টেলিগ্রাম চ্যানেল ও গ্রুপ ম্যানেজার -->
+  <!-- ৯. টেলিগ্রাম চ্যানেল ও গ্রুপ ম্যানেজার (Screen 20) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -828,7 +972,7 @@ ADMIN_HTML = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- ১০. অটো-পেমেন্ট হিস্ট্রি (Instant TON Transfers) -->
+  <!-- ১০. অটো-পেমেন্ট হিস্ট্রি (Instant TON Transfers) (Screen 20) -->
   <div class="card-dark p-5 space-y-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
