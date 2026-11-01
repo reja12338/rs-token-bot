@@ -1,15 +1,21 @@
 """
-File: bot.py (Production Telegram Bot for Render.com)
-Deploy on Render as a Web Service or Background Worker (Free Plan)
+Official RS TOKEN Telegram Mining Bot
+TON Blockchain Cloud Mining Ecosystem
 """
 import os
 import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import CommandStart, Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, MenuButtonWebApp
+from aiogram.filters import CommandStart
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    WebAppInfo,
+    MenuButtonWebApp,
+)
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-render-app.onrender.com")
+# আপনার বটের টোকেন ও লাইভ মিনি অ্যাপ URL
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8960410904:AAFprxOxrOO4ewr6F0ZvZi4nEJ88nEYwZsk")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://ais-pre-n4snohngpxyjjx7lal46kp-265976151801.asia-east1.run.app")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -19,41 +25,47 @@ async def start_handler(message: types.Message):
     user = message.from_user
     username = user.first_name if user else "Miner"
 
-    # Set Telegram Menu Button to open RS TOKEN WebApp
-    await bot.set_chat_menu_button(
-        chat_id=message.chat.id,
-        menu_button=MenuButtonWebApp(
-            text="🚀 Open RS Mining",
-            web_app=WebAppInfo(url=WEBAPP_URL)
+    # টেলিগ্রাম চ্যাটের নিচের বামপাশের মেনু বাটন সেট করা
+    try:
+        await bot.set_chat_menu_button(
+            chat_id=message.chat.id,
+            menu_button=MenuButtonWebApp(
+                text="🚀 Open RS Mining",
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )
         )
-    )
+    except Exception as e:
+        print(f"Menu error: {e}")
 
+    # চ্যাটের ইনলাইন বাটন
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="🚀 Open RS Mining Dashboard",
-                    web_app=WebAppInfo(url=f"{WEBAPP_URL}?uid={user.id if user else ''}")
+                    text="🚀 ওপেন RS মাইনিং ড্যাশবোর্ড",
+                    web_app=WebAppInfo(url=WEBAPP_URL)
                 )
             ],
             [
-                InlineKeyboardButton(text="📢 RS Official Channel", url="https://t.me/RSTokenOfficial"),
-                InlineKeyboardButton(text="👥 Community Group", url="https://t.me/RSTokenChat")
+                InlineKeyboardButton(text="📢 অফিসিয়াল চ্যানেল", url="https://t.me/RSTokenOfficial"),
+                InlineKeyboardButton(text="👥 কমিউনিটি গ্রুপ", url="https://t.me/RSTokenChat")
             ]
         ]
     )
 
     notice = (
-        f"💎 **Welcome {username} to RS TOKEN Mining Bot!**\n\n"
-        "⚡ Built on the **TON Blockchain**.\n"
-        "Mine $RS tokens for free, watch ads, join channels, and withdraw to your Tonkeeper wallet!\n\n"
-        "Click the button below to launch your mining dashboard:"
+        f"💎 **স্বাগতম {username} RS TOKEN মাইনিং বটে!** 🚀\n\n"
+        "⚡ এটি **TON ব্লকচেইন** ভিত্তিক ক্রিপ্টো মাইনিং ও টোকেন প্ল্যাটফর্ম।\n\n"
+        "• ফ্রিতে ক্লাউড মাইনিং চালু রাখুন\n"
+        "• অ্যাড দেখে ও টাস্ক সম্পন্ন করে RS আয় করুন\n"
+        "• ২৪ ঘণ্টা পর Tonkeeper ওয়ালেটে সরাসরি উইথড্র নিন!\n\n"
+        "ড্যাশবোর্ড খুলতে নিচের বাটনে চাপুন:"
     )
 
     await message.answer(notice, parse_mode="Markdown", reply_markup=keyboard)
 
 async def main():
-    print("🚀 RS TOKEN Telegram Bot is running on Render...")
+    print("🚀 RS TOKEN Bot is running...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
